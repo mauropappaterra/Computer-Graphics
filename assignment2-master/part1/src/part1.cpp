@@ -156,15 +156,24 @@ void drawCube(Context &ctx)
 	
 	// 1) model = position, rotation, scale. Identity Matrix -> glm::mat4 model = glm::mat4(1.0f); 
 	
-	//glm::mat4 model = glm::translate(glm::mat4(1.0f), 1.0, vec3(0.0, 1.5, 1.0));
-	//glm::mat4 model = glm::rotate(glm::mat4(1.0f), angle_a, axis);
-	glm::mat4 model = glm::rotate(glm::mat4(1.0f), angle_b, axis);
+	//glm::mat4 model = glm::translate(glm::mat4(1.0f), 1.0, glm::vec3(0.0, 1.5, 1.0));
+	
+	// Rotate
+	glm::mat4 model = glm::rotate(glm::mat4(1.0f), angle_a, axis);
+	//glm::mat4 model = glm::rotate(glm::mat4(1.0f), angle_b, axis);
+	
+	// Scale
+	//glm::mat4 model = glm::scale(glm::mat4(1.0f), glm::vec3(0.5f));
+	//glm::mat4 model = glm::scale(glm::mat4(1.0f), glm::vec3(1.0f));
+	//glm::mat4 model = glm::scale(glm::mat4(1.0f), glm::vec3(1.2f));
+	//glm::mat4 model = glm::scale(glm::mat4(1.0f), glm::vec3(2.0f));
+
 
 	// 2) view of the camera. Identity Matrix -> glm::mat4 view = glm::mat4(1.0f); 
 	glm::mat4 view = glm::lookAt(
-		glm::vec3(1, 0, 3), // Position of camera in world (x,y,z) 
-		glm::vec3(0, 0, 0), // Look at origin
-		glm::vec3(0, -1, 0)  // Head's up - Use -> (0, 1, 0) for head's down
+		glm::vec3(1, 0, 3), // EYE: Position of camera in world (x,y,z) 
+		glm::vec3(0, 0, 0), // AT: Position the camera is looking at (origin in this case)
+		glm::vec3(0, 0, 1)  // UP: Head's up  (Use -> (0, 1, 0) for head's down)
 	);
 
 	// 3) projection, 'orthogonal' or 'perspective' projection. Identity Matrix ->	glm::mat4 projection = glm::mat4(1.0f); 
