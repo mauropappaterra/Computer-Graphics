@@ -162,9 +162,9 @@ void drawCube(Context &ctx)
 
 	// 2) view of the camera. Identity Matrix -> glm::mat4 view = glm::mat4(1.0f); 
 	glm::mat4 view = glm::lookAt(
-		glm::vec3(-4, -3, 3), // Position of camera in world
+		glm::vec3(1, 0, 3), // Position of camera in world (x,y,z) 
 		glm::vec3(0, 0, 0), // Look at origin
-		glm::vec3(0, -1, 0)  // Head's up
+		glm::vec3(0, -1, 0)  // Head's up - Use -> (0, 1, 0) for head's down
 	);
 
 	// 3) projection, 'orthogonal' or 'perspective' projection. Identity Matrix ->	glm::mat4 projection = glm::mat4(1.0f); 
