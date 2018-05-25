@@ -145,23 +145,23 @@ void drawCube(Context &ctx)
     glUseProgram(ctx.program);
 
     double elapsed_time = glfwGetTime();
-	
+
 	// angles that increase with elapsed time
-	float angle_a = (float)(glm::sin(elapsed_time) + 1) * 3.14; 
+	float angle_a = (float)(glm::sin(elapsed_time) + 1) * 3.14;
 	float angle_b = (float)(glm::cos(elapsed_time) + 1) * 3.14;
 
 	glm::vec3 axis = glm::vec3(angle_a, angle_b, 0);
 
 	// Define the model, view, and projection matrices here
-	
-	// 1) model = position, rotation, scale. Identity Matrix -> glm::mat4 model = glm::mat4(1.0f); 
-	
+
+	// 1) model = position, rotation, scale. Identity Matrix -> glm::mat4 model = glm::mat4(1.0f);
+
 	//glm::mat4 model = glm::translate(glm::mat4(1.0f), 1.0, glm::vec3(0.0, 1.5, 1.0));
-	
+
 	// Rotate
 	glm::mat4 model = glm::rotate(glm::mat4(1.0f), angle_a, axis);
 	//glm::mat4 model = glm::rotate(glm::mat4(1.0f), angle_b, axis);
-	
+
 	// Scale
 	//glm::mat4 model = glm::scale(glm::mat4(1.0f), glm::vec3(0.5f));
 	//glm::mat4 model = glm::scale(glm::mat4(1.0f), glm::vec3(1.0f));
@@ -169,16 +169,16 @@ void drawCube(Context &ctx)
 	//glm::mat4 model = glm::scale(glm::mat4(1.0f), glm::vec3(2.0f));
 
 
-	// 2) view of the camera. Identity Matrix -> glm::mat4 view = glm::mat4(1.0f); 
+	// 2) view of the camera. Identity Matrix -> glm::mat4 view = glm::mat4(1.0f);
 	glm::mat4 view = glm::lookAt(
-		glm::vec3(1, 0, 3), // EYE: Position of camera in world (x,y,z) 
+		glm::vec3(1, 0, 3), // EYE: Position of camera in world (x,y,z)
 		glm::vec3(0, 0, 0), // AT: Position the camera is looking at (origin in this case)
-		glm::vec3(0, 0, 1)  // UP: Head's up  (Use -> (0, 1, 0) for head's down)
+		glm::vec3(0, 1, 0)  // UP: Head's up  (Use -> (0, -1, 0) for head's down)
 	);
 
-	// 3) projection, 'orthogonal' or 'perspective' projection. Identity Matrix ->	glm::mat4 projection = glm::mat4(1.0f); 
+	// 3) projection, 'orthogonal' or 'perspective' projection. Identity Matrix ->	glm::mat4 projection = glm::mat4(1.0f);
 	glm::mat4 projection = glm::perspective(glm::radians(45.0f), 1.0f, 0.1f, 100.0f);
-    
+
 	// Concatenate the model, view, and projection matrices to a
     // ModelViewProjection (MVP) matrix and pass it as a uniform
     // variable to the shader program.
