@@ -195,9 +195,9 @@ void drawMesh(Context &ctx, GLuint program, const MeshVAO &meshVAO)
 	//Light 
 	glm::vec3 lightpos = glm::vec3(3.0, 0.0, 0.0); // Position of the light
 	//glm::vec3 lightcol = glm::vec3(1.0, 0.0, 0.0); // Light colour (Red)
-	glm::vec4 ambient_color = glm::vec4(0.2, 0.0, 0.2, 1.0); //Ambient light coulour //kinda black
-	glm::vec4 diffuse_color = glm::vec4(1.0, 0.0, 1.0, 1.0); //Diffuse light colour //purple
-	glm::vec4 specular_color = glm::vec4(1.0, 1.0, 1.0, 1.0); //Specular light colour //white
+	glm::vec4 ambient_color = glm::vec4(0.2, 0.0, 0.2, 1.0); //Ambient light coulour
+	glm::vec4 diffuse_color = glm::vec4(1.0, 0.0, 1.0, 1.0); //Diffuse light colour
+	glm::vec4 specular_color = glm::vec4(1.0, 1.0, 1.0, 1.0); //Specular light colour
 	float shininess = 2048.0f;
 
 
