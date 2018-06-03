@@ -179,7 +179,8 @@ void drawMesh(Context &ctx, GLuint program, const MeshVAO &meshVAO)
     glm::mat4 model = trackballGetRotationMatrix(ctx.trackball);
 	
 	// Set up the the camera view and projection matrices
-	glm::mat4 view = glm::lookAt(
+	//glm::mat4 view = glm::mat4();
+	glm::mat4 view = glm::lookAt( 
 		glm::vec3(1, 0, 3), // EYE: Position of camera in world (x,y,z)
 		glm::vec3(0, 0, 0), // AT: Position the camera is looking at (origin in this case)
 		glm::vec3(0, 1, 0)  // UP: Head's up  (Use -> (0, -1, 0) for head's down)
@@ -190,9 +191,15 @@ void drawMesh(Context &ctx, GLuint program, const MeshVAO &meshVAO)
     
 	glm::mat4 mv = view * model;
     glm::mat4 mvp = projection * mv;
-    // ...
+    
+	//Light 
+	glm::vec3 lightpos = glm::vec3(3.0, 0.0, 0.0); // Position of the light
+	//glm::vec3 lightcol = glm::vec3(1.0, 0.0, 0.0); // Light colour (Red)
+	glm::vec4 ambient_color = glm::vec4(0.2, 0.0, 0.2, 1.0); //Ambient light coulour //kinda black
+	glm::vec4 diffuse_color = glm::vec4(1.0, 0.0, 1.0, 1.0); //Diffuse light colour //purple
+	glm::vec4 specular_color = glm::vec4(1.0, 1.0, 1.0, 1.0); //Specular light colour //white
+	float shininess = 2048.0f;
 
-	
 
     // Activate program
     glUseProgram(program);
