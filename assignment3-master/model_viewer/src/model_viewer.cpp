@@ -20,6 +20,15 @@
 #include <cstdlib>
 #include <algorithm>
 
+bool ambientToggle = true;
+bool diffuseToggle = true;
+bool specularToggle = true;
+bool gammaToggle = false;
+bool normalToggle = false;
+bool cubemapToggle = false;
+float zoom = 45.0f;
+float shine = 2048.0f;
+
 // The attribute locations we will use in the vertex shader
 enum AttributeLocation {
     POSITION = 0,
@@ -167,7 +176,7 @@ void init(Context &ctx)
     createMeshVAO(ctx, ctx.mesh, &ctx.meshVAO);
 
     // Load cubemap texture(s)
-    // ...
+	ctx.cubemap = loadCubemap(cubemapDir() + "/Forrest/");
 
     initializeTrackball(ctx);
 }
@@ -187,7 +196,7 @@ void drawMesh(Context &ctx, GLuint program, const MeshVAO &meshVAO)
 	);
 
     //glm::mat4 projection = glm::ortho(-ctx.aspect, ctx.aspect, -1.0f, 1.0f, -1.0f, 1.0f);
-	glm::mat4 projection = glm::perspective(glm::radians(45.0f), 1.0f, 0.1f, 100.0f);
+	glm::mat4 projection = glm::perspective(glm::radians(45.0f /*zoom*/), 1.0f, 0.1f, 100.0f);
     
 	glm::mat4 mv = view * model;
     glm::mat4 mvp = projection * mv;
@@ -195,23 +204,68 @@ void drawMesh(Context &ctx, GLuint program, const MeshVAO &meshVAO)
 	//Light 
 	glm::vec3 lightpos = glm::vec3(3.0, 0.0, 0.0); // Position of the light
 	//glm::vec3 lightcol = glm::vec3(1.0, 0.0, 0.0); // Light colour (Red)
-	glm::vec4 ambient_color = glm::vec4(0.2, 0.0, 0.2, 1.0); //Ambient light coulour
+	glm::vec4 ambient_color = glm::vec4(0.3, 0.1, 0.2, 1.0); //Ambient light coulour
 	glm::vec4 diffuse_color = glm::vec4(1.0, 0.0, 1.0, 1.0); //Diffuse light colour
 	glm::vec4 specular_color = glm::vec4(1.0, 1.0, 1.0, 1.0); //Specular light colour
-	float shininess = 2048.0f;
-
+	float shininess = shine;
 
     // Activate program
     glUseProgram(program);
 
     // Bind textures
-    // ...
+	
+	/* Replace folder name for other available textures!:
+	-Forrest
+	-LarnacaCastle
+	-LarnacaCastle2
+	-RomeChurch
+	*/
+
+	if (shine <= 0.125) {
+		ctx.cubemap = loadCubemap(cubemapDir() + "/Forrest/prefiltered/0.125");
+	}
+	else if (shine > 0.125 && shine <= 0.5) {
+		ctx.cubemap = loadCubemap(cubemapDir() + "/Forrest/prefiltered/0.5");
+	}
+	else if (shine > 0.5 && shine <= 2) {
+		ctx.cubemap = loadCubemap(cubemapDir() + "/Forrest/prefiltered/2");
+	}
+	else if (shine > 2 && shine <= 8) {
+		ctx.cubemap = loadCubemap(cubemapDir() + "/Forrest/prefiltered/8");
+	}
+	else if (shine > 8 && shine <= 32) {
+		ctx.cubemap = loadCubemap(cubemapDir() + "/Forrest/prefiltered/32");
+	}
+	else if (shine > 32 && shine <= 128) {
+		ctx.cubemap = loadCubemap(cubemapDir() + "/Forrest/prefiltered/128");
+	}
+	else if (shine > 128 && shine <= 512) {
+		ctx.cubemap = loadCubemap(cubemapDir() + "/Forrest/prefiltered/512");
+	}
+	else if (shine > 512) {
+		ctx.cubemap = loadCubemap(cubemapDir() + "/Forrest/prefiltered/2048");
+	}
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, ctx.cubemap);
 
     // Pass uniforms
     glUniformMatrix4fv(glGetUniformLocation(program, "u_mv"), 1, GL_FALSE, &mv[0][0]);
     glUniformMatrix4fv(glGetUniformLocation(program, "u_mvp"), 1, GL_FALSE, &mvp[0][0]);
     glUniform1f(glGetUniformLocation(program, "u_time"), ctx.elapsed_time);
     // ...
+	glUniform3fv(glGetUniformLocation(program, "u_lightpos"), 1, &lightpos[0]);
+	glUniform4fv(glGetUniformLocation(program, "u_ambient"), 1, &ambient_color[0]);
+	glUniform4fv(glGetUniformLocation(program, "u_diffuse"), 1, &diffuse_color[0]);
+	glUniform4fv(glGetUniformLocation(program, "u_specular"), 1, &specular_color[0]);
+	glUniform1f(glGetUniformLocation(program, "u_shininess"), shininess);
+	glUniform1i(glGetUniformLocation(program, "u_ambient_toggle"), ambientToggle);
+	glUniform1i(glGetUniformLocation(program, "u_diffuse_toggle"), diffuseToggle);
+	glUniform1i(glGetUniformLocation(program, "u_specular_toggle"), specularToggle);
+	glUniform1i(glGetUniformLocation(program, "u_gamma_toggle"), gammaToggle);
+	glUniform1i(glGetUniformLocation(program, "u_normal_toggle"), normalToggle);
+	glUniform1i(glGetUniformLocation(program, "u_cubemap_toggle"), cubemapToggle);
+	glUniform1i(glGetUniformLocation(program, "u_cubemap"), 0);
 
     // Draw!
     glBindVertexArray(meshVAO.vao);
@@ -272,6 +326,38 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
     if (key == GLFW_KEY_R && action == GLFW_PRESS) {
         reloadShaders(ctx);
     }
+	//
+	if (key == GLFW_KEY_1 && action == GLFW_PRESS) {
+		ambientToggle = !ambientToggle;
+	}
+	if (key == GLFW_KEY_2 && action == GLFW_PRESS) {
+		diffuseToggle = !diffuseToggle;
+	}
+	if (key == GLFW_KEY_3 && action == GLFW_PRESS) {
+		specularToggle = !specularToggle;
+	}
+	if (key == GLFW_KEY_4 && action == GLFW_PRESS) {
+		gammaToggle = !gammaToggle;
+	}
+	if (key == GLFW_KEY_5 && action == GLFW_PRESS) {
+		normalToggle = !normalToggle;
+	}
+	if (key == GLFW_KEY_6 && action == GLFW_PRESS) {
+		cubemapToggle = !cubemapToggle;
+	}
+	if (key == GLFW_KEY_Q && action == GLFW_PRESS) {
+		zoom += 10.0f;
+	}
+	if (key == GLFW_KEY_W && action == GLFW_PRESS) {
+		zoom -= 10.0f;
+	}
+	if (key == GLFW_KEY_Z && action == GLFW_PRESS) {
+		shine = shine * 4;
+	}
+	if (key == GLFW_KEY_X && action == GLFW_PRESS) {
+		shine = shine / 4;
+	}
+
 }
 
 void charCallback(GLFWwindow* window, unsigned int codepoint)
